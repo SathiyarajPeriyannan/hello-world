@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fccl-deployment
+  namespace: hcl-art-cicddeploy
+  labels:
+    app: fccl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fccl
+  template:
+    metadata:
+      labels:
+        app: fccl
+    spec:
+      containers:
+      - name: fccl
+        image: tomcat:8.5
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: nexussecret
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: tomcat-service
+  namespace: hcl-art-cicddeploy
+spec:
+  type: NodePort
+  selector:
+    app: fccl
+  ports:
+    - port: 8080 # Default port for image
+      targetPort: 8080
